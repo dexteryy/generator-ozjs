@@ -1,0 +1,10 @@
+repos: 
+
+    dexteryy/OzJS:
+      file:
+        oz.js: js/lib/
+<% includeComponents.forEach(function(com){ %> <% if (com && com.repo) { %>
+    <%= com.repo %>:
+      file: <% Object.keys(com.file).forEach(function(src){ %>
+        <%= src %>: <%= this[src] %> <% }, com.file); %> 
+<% } %> <% }); %>
