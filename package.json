@@ -1,7 +1,7 @@
 {
   "name": "generator-ozjs",
   "version": "0.1.0",
-  "description": "Yeoman generator for OzJS",
+  "description": "Scaffolding tool for OzJS which offers a packaging workflow integrates Ozma, istatic, Grunt and Yo",
   "main": "app/index.js",
   "dependencies": {
     "yeoman-generator": "~0.10.0"
@@ -14,6 +14,7 @@
   "keywords": [
     "yeoman-generator",
     "yeoman",
+    "scaffolding",
     "generator",
     "framework",
     "component",

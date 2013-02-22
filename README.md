@@ -1,7 +1,7 @@
 
 # OzJS generator
 
-Yeoman generator for [OzJS](https://github.com/dexteryy/OzJS) which integrates [Ozma](https://github.com/dexteryy/ozma.js), [istatic](https://github.com/mockee/istatic), [Grunt](http://gruntjs.com/), [Compass](http://compass-style.org)/[Stylus](learnboost.github.com/stylus/), [micro-framework](http://ozjs.org/#framework) and many best practices.
+Scaffolding tool for [OzJS](https://github.com/dexteryy/OzJS) which offers a packaging workflow integrates [Ozma](https://github.com/dexteryy/ozma.js), [istatic](https://github.com/mockee/istatic), [Grunt](http://gruntjs.com/), [Yo](http://yeoman.io/gettingstarted_1.0.html), [Compass](http://compass-style.org)/[Stylus](learnboost.github.com/stylus/), [micro-framework](http://ozjs.org/#framework) and many best practices.
 
 Available generators:
 
