@@ -12,7 +12,7 @@ module.exports = function(grunt) {
             npm: {
                 options: {
                     importas: 'amd',
-                    exportas: 'cjs',
+                    exportas: 'cjs'
                 },
                 files: [{
                     expand: true,
