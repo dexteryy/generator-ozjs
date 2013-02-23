@@ -1,7 +1,11 @@
+<!---
+layout: intro
+title: generator-ozjs
+-->
 
 # OzJS generator
 
-Scaffolding tool for [OzJS](https://github.com/dexteryy/OzJS) which offers a packaging workflow integrates [Ozma](https://github.com/dexteryy/ozma.js), [istatic](https://github.com/mockee/istatic), [Grunt](http://gruntjs.com/), [Yo](http://yeoman.io/gettingstarted_1.0.html), [Compass](http://compass-style.org)/[Stylus](learnboost.github.com/stylus/), [micro-framework](http://ozjs.org/#framework) and many best practices.
+Scaffolding tool for [OzJS](https://github.com/dexteryy/OzJS) which offers a packaging workflow integrates [Ozma](http://ozjs.org/ozma), [istatic](https://ozjs.org/istatic), [Grunt](http://gruntjs.com/), [Yo](http://yeoman.io/gettingstarted_1.0.html), [Compass](http://compass-style.org)/[Stylus](http://learnboost.github.com/stylus/), [micro-framework](http://ozjs.org/#framework) and many best practices.
 
 Available generators:
 
@@ -14,7 +18,7 @@ Available generators:
 
 1. node, npm
 2. [grunt v0.4](http://gruntjs.com/getting-started) - `npm install grunt-cli -g`
-3. [istatic](https://github.com/mockee/istatic) - `node install node-istatic -g`
+3. [istatic](https://ozjs.org/istatic) - `node install node-istatic -g`
 4. [Yo](http://yeoman.io/gettingstarted_1.0.html) - `npm install yo -g`
 5. ruby, gem, bundle (if you need Scss)
 
@@ -53,11 +57,11 @@ grunt
 
 ## Source code
 
-* [View on Github](https://github.com/dexteryy/grunt-ozjs)
+* [View on Github](https://github.com/dexteryy/generator-ozjs)
 
 ## More References
 
-See [OzJS References](http://ozjs.org/#ref)
+See [OzJS Project Homepage](http://ozjs.org/)
 
 ## Release History
 
