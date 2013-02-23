@@ -9,7 +9,8 @@ Scaffolding tool for [OzJS](https://github.com/dexteryy/OzJS) which offers a pac
 
 Available generators:
 
-* [ozjs](#app) (aka [ozjs:app](#app))
+* [ozjs](#app) (aka [ozjs:app](#app)) - create a OzJS-based web app project
+* [ozjs:npm](#npm) - create configure files to publish AMD module to NPM without tears
 * more coming soon...
 
 ## Getting Started
@@ -20,7 +21,7 @@ Available generators:
 2. [grunt v0.4](http://gruntjs.com/getting-started) - `npm install grunt-cli -g`
 3. [istatic](https://ozjs.org/istatic) - `node install node-istatic -g`
 4. [Yo](http://yeoman.io/gettingstarted_1.0.html) - `npm install yo -g`
-5. ruby, gem, bundle (if you need Scss)
+5. ruby, gem, [bundler](http://gembundler.com/) (if you need Scss)
 
 ### Install
 
@@ -51,6 +52,15 @@ npm install
 bundle install
 istatic pull
 grunt
+```
+
+#### NPM
+
+```
+yo ozjs:npm [project_directory]
+npm install
+grunt
+grunt publish
 ```
 
 ### More coming soon...
