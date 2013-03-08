@@ -3,6 +3,11 @@ var path = require('path');
 var util = require('util');
 var yeoman = require('yeoman-generator');
 var components = require('./components');
+var prompt = require('prompt');
+
+prompt.message = "";
+prompt.delimiter = "";
+prompt.colors = false;
 
 var Generator = module.exports = function Generator() {
     yeoman.generators.Base.apply(this, arguments);
@@ -38,13 +43,20 @@ util.inherits(Generator, yeoman.generators.NamedBase);
 
 Generator.prototype.askForEnv = function() {
     var done = this.async();
-    var prompts = [{
-        name: 'forModernBrowser',
-        message: 'Does your project only work for modern browser, like chrome, touch device? (N/y)'
-    }];
-    this.prompt(prompts, function(err, props) {
+    prompt.start();
+    prompt.get({
+        properties: {
+            forModernBrowser: {
+                description: "Does your project only work for modern browser, like chrome, touch device? ".cyan
+                    + 'y/n'.magenta,
+                type: 'string',
+                pattern: /^[yYnN]$/,
+                default: 'N'
+            }
+        }
+    }, function (err, props) {
         if (err) {
-        return this.emit('error', err);
+            return this.emit('error', err);
         }
         this.userOpt.forModernBrowser = (/y/i).test(props.forModernBrowser);
         done();
@@ -57,15 +69,20 @@ Generator.prototype.askForName = function() {
 
 Generator.prototype.askForTools = function() {
     var done = this.async();
-    var prompts = [{
-        name: 'cssPreprocessor',
-        message: 'Select the css preprocessor you prefer: ' 
-            + '(' + '0: ' + 'Scss' + ' [default]'
-            + '. 1: ' + 'Stylus' + ' [unavailable]' + ')'
-    }];
-    this.prompt(prompts, function(err, props) {
+    prompt.start();
+    prompt.get({
+        properties: {
+            cssPreprocessor: {
+                description: "Select the css preprocessor you prefer? ".cyan
+                    + ('0: ' + 'Scss' + ' [default]' + '. 1: ' + 'Stylus' + ' [unavailable]').magenta,
+                type: 'string',
+                pattern: /^[0-1]$/,
+                default: 0
+            }
+        }
+    }, function (err, props) {
         if (err) {
-        return this.emit('error', err);
+            return this.emit('error', err);
         }
         this.userOpt.cssPreprocessor = parseFloat(props.cssPreprocessor) || 0;
         done();
@@ -73,24 +90,31 @@ Generator.prototype.askForTools = function() {
 };
 
 Generator.prototype.askForComponents = function() {
-    var self = this;
     var done = this.async();
-    var prompts = Object.keys(components).map(function(type){
+
+    var properties = {};
+    Object.keys(components).forEach(function(type){
         var com = this[type];
-        return {
-            name: type,
-            message: 'Select ' + com.desc + ' you wish to include: '
-                + '(' + ['0: ' + 'none'].concat(com.choices.map(function(choice, i){
+        properties[type] = {
+            description: ('Select ' + com.desc + ' you wish to include: ').cyan 
+                + ['0: ' + 'none'].concat(com.choices.map(function(choice, i){
                     return (i + 1) + ': ' + choice.name;
                 })).map(function(text, i){
                     return text + (com.defaultChoice === i - 1 && ' [default]'
-                        || i && !com.choices[i - 1].repo && ' [unavailable]' || ''); 
-                }).join('. ') + ')'
+                        || i && !com.choices[i - 1].repo && !com.choices[i - 1].repos && ' [unavailable]' || ''); 
+                }).join('. ').magenta,
+            type: 'string',
+            pattern: new RegExp('^[0-' + com.choices.length + ']$'),
+            default: com.defaultChoice + 1
         };
     }, components);
-    this.prompt(prompts, function(err, props) {
+
+    prompt.start();
+    prompt.get({
+        properties: properties
+    }, function (err, props) {
         if (err) {
-            return self.emit('error', err);
+            return this.emit('error', err);
         }
         var coms = {};
         for (var i in components) {
@@ -98,9 +122,9 @@ Generator.prototype.askForComponents = function() {
         }
         Object.keys(props).forEach(function(type){
             var n = parseInt(props[type], 10);
-            if (n !== 0 && !n) {
-                props[type] = coms[type].defaultChoice + 1;
-            }
+            //if (n !== 0 && !n) {
+                //props[type] = coms[type].defaultChoice + 1;
+            //}
             var com = coms[type].choices[n - 1];
             if (com && com.repos) {
                 com.repos.forEach(function(sub, i){
@@ -112,28 +136,28 @@ Generator.prototype.askForComponents = function() {
                 delete props[type];
             }
         });
-        self.includeComponents = Object.keys(props).map(function(type){
+        this.includeComponents = Object.keys(props).map(function(type){
             var com = coms[type].choices[props[type] - 1];
             if (!com) {
                 return;
             }
             var file = com.file = {};
             for (var src in com.jsFiles) {
-                file[src] = self.paths.mod + com.jsFiles[src];
+                file[src] = this.paths.mod + com.jsFiles[src];
             }
             for (var src in com.cssFiles) {
-                file[src] = self.paths.cssmod + com.cssFiles[src];
+                file[src] = this.paths.cssmod + com.cssFiles[src];
             }
             if (com.name === 'Mo') {
-                self.userOpt.hasMo = true;
+                this.userOpt.hasMo = true;
             }
             if (type === 'dom' && com.name !== 'jQuery') {
-                self.userOpt.jqueryAlternate = com.moduleId;
+                this.userOpt.jqueryAlternate = com.moduleId;
             }
             return com;
-        });
+        }.bind(this));
         done();
-    });
+    }.bind(this));
 };
 
 Generator.prototype.projectFiles = function() {
