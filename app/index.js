@@ -13,6 +13,14 @@ var Generator = module.exports = function Generator() {
         banner: 'appname'
     });
     this.appDir = this.appname ? this.appname + '/' : '';
+
+    this.on('end', function () {
+        this.log('\nI\'m all done. Just run ' + (
+            (this.appname ? ('cd ' + this.appDir + ' && ') : '') 
+            + 'npm install && bundle install && istatic pull && grunt'
+        ).bold.yellow + ' to install the required dependencies and build the app.');
+    });
+
     this.appname = this.appname || path.basename(process.cwd());
 
     this.userOpt = {};
@@ -24,9 +32,6 @@ var Generator = module.exports = function Generator() {
         statics: 'public/static/'
     }; 
 
-    this.on('end', function () {
-        this.log('\nI\'m all done. Just run ' + 'npm install && bundle install && istatic pull'.bold.yellow + ' to install the required dependencies.');
-    });
 };
 
 util.inherits(Generator, yeoman.generators.NamedBase);
@@ -92,11 +97,11 @@ Generator.prototype.askForComponents = function() {
             coms[i] = components[i];
         }
         Object.keys(props).forEach(function(type){
-            var com = coms[type].choices[props[type] - 1];
-            if (!com) {
+            var n = parseInt(props[type], 10);
+            if (n !== 0 && !n) {
                 props[type] = coms[type].defaultChoice + 1;
-                com = coms[type].choices[props[type] - 1];
             }
+            var com = coms[type].choices[n - 1];
             if (com && com.repos) {
                 com.repos.forEach(function(sub, i){
                     props[type + i] = 1;
@@ -158,6 +163,7 @@ Generator.prototype.bootstrapFiles = function() {
         // @TODO stylus
     }
     this.mkdir(this.appDir + 'pics');
+    this.copy('../../templates/pics/glyphicons-halflings.png', this.appDir + 'pics/glyphicons-halflings.png');
     this.mkdir(this.appDir + 'tpl');
     this.template('../../templates/html/index.html', this.appDir + 'docs/index.html');
     this.mkdir(this.appDir + this.paths.dist);

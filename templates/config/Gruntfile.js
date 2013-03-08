@@ -10,6 +10,11 @@ module.exports = function(grunt) {
             banner: '/*! <%= pkg.name %> - v<%= pkg.version %>'
         },
 
+        clean: {
+            dist: ["<%= meta.distDir %>"],
+            statics: ["<%= meta.staticDir %>"]
+        },
+
         furnace: {
             tpl: {
                 options: {
@@ -28,7 +33,7 @@ module.exports = function(grunt) {
 
         ozma: {
             main: {
-                saveConfig: true,
+                saveConfig: false,
                 src: 'js/main.js',
                 config: {
                     baseUrl: "js/mod/",
@@ -50,9 +55,11 @@ module.exports = function(grunt) {
                     outputStyle: 'expanded',
                     noLineComments: false,
                     require: [
+                        'compass-normalize',
                         'animation',
                         'animate-sass',
-                        'ceaser-easing'
+                        'ceaser-easing',
+                        'compass-recipes'
                     ],
                     environment: 'production'
                 }
@@ -65,7 +72,7 @@ module.exports = function(grunt) {
                     optimizationLevel: 3
                 },
                 files: {
-                    '<%= meta.distDir %>/pics/': 'pics/**.{png,jpg}',
+                    '<%= meta.distDir %>/pics/': 'pics/**.{png,jpg}'
                 }
             }
         },
@@ -76,8 +83,9 @@ module.exports = function(grunt) {
                     removeComments: true,
                     collapseWhitespace: true
                 },
-                src: ['docs/**/*.html'],
-                dest: '<%= meta.publicDir %>/'
+                files: {
+                    '<%= meta.publicDir %>/index.html': 'docs/index.html'
+                }
             }
         },
 
@@ -108,38 +116,13 @@ module.exports = function(grunt) {
 
         copy: {
             pics: {
-                files: {
-                    src: ['<%= meta.distDir %>/pics/**'],
-                    dest: '<%= meta.staticDir %>/pics/'
-                }
+                files: [{
+                    expand: true,
+                    cwd: '<%= meta.distDir %>/',
+                    src: ['pics/**'],
+                    dest: '<%= meta.staticDir %>/'
+                }]
             },
-        },
-
-        watch: [{
-            files: 'js/**/*.js',
-            tasks: ['ozma']
-        }, {
-            files: 'css/**/*.scss',
-            tasks: ['compass']
-        }, {
-            files: 'tpl/**/*.tpl',
-            tasks: ['furnace:tpl']
-        }, {
-            files: 'pics/**/*.{png,jpg}',
-            tasks: ['imagemin']
-        }, {
-            files: 'docs/**/*.html',
-            tasks: ['htmlmin']
-        }],
-
-        connect: {
-            examples: {
-                options: {
-                    port: 9001,
-                    base: '<%= meta.publicDir %>/',
-                    keepalive: true
-                }
-            }
         },
 
         jshint: {
@@ -177,7 +160,7 @@ module.exports = function(grunt) {
                 "proto": true,                 // suppresses warnings about the __proto__ property
                 "validthis": true,             // suppresses warnings about possible strict violations when the code is running in strict mode and you use this in a non-constructor function
                 // Personal styling preferences.
-                "indent": 4,                   // Specify indentation spacing
+                //"indent": 4,                   // Specify indentation spacing
                 "asi": false,                  // suppresses warnings about missing semicolons
                 "laxbreak": true,              // Tolerate unsafe line breaks e.g. `return [\n] x` without semicolons.
                 "laxcomma": true,              // suppresses warnings about comma-first coding style
@@ -190,8 +173,35 @@ module.exports = function(grunt) {
                 "scripturl": true,             // Tolerate script-targeted URLs.
                 "multistr": true               // suppresses warnings about multi-line strings
             },
-            main: ['./*.js', 'js/**/*.js']
-        }
+            main: ['./*.js', 'js/**/*.js', '!js/mod/**', '!js/lib/**']
+        },
+
+        connect: {
+            examples: {
+                options: {
+                    port: 9001,
+                    base: '<%= meta.publicDir %>/',
+                    keepalive: true
+                }
+            }
+        },
+
+        watch: [{
+            files: 'js/**/*.js',
+            tasks: ['ozma']
+        }, {
+            files: 'css/**/*.scss',
+            tasks: ['compass']
+        }, {
+            files: 'tpl/**/*.tpl',
+            tasks: ['furnace:tpl']
+        }, {
+            files: 'pics/**/*.{png,jpg}',
+            tasks: ['imagemin']
+        }, {
+            files: 'docs/**/*.html',
+            tasks: ['htmlmin']
+        }]
 
     });
 
@@ -213,14 +223,16 @@ module.exports = function(grunt) {
     
     grunt.registerTask('dev', [
         'jshint',
+        'clean:dist',
         'furnace:tpl',
         'ozma',
-        'compass',
         'imagemin',
+        'compass',
         'htmlmin'
     ]);
 
     grunt.registerTask('deploy', [
+        'clean:statics',
         'concat',
         'uglify', 
         'cssmin',

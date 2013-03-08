@@ -9,14 +9,15 @@ _(Coming soon)_
 ### Require
 
 1. node, npm
-2. grunt v0.4 - `npm install grunt-cli -g`
-3. istatic - `node install node-istatic -g`
-4. ruby, gem, bundle
+2. [grunt v0.4](http://gruntjs.com/getting-started) - `npm install grunt-cli -g`
+3. [istatic](https://ozjs.org/istatic) - `node install node-istatic -g`
+5. ruby, gem, [bundler](http://gembundler.com/)
 
 ### Install dependencies
 
 1. `npm install`
 2. `bundle install`
+2. `istatic pull`
 
 ### Build and test
 

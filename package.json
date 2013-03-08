@@ -1,6 +1,6 @@
 {
   "name": "generator-ozjs",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Scaffolding tool for OzJS which offers a packaging workflow integrates toolchain, micro-framework and many best practices",
   "main": "app/index.js",
   "dependencies": {

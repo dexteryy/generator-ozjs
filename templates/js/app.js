@@ -1,7 +1,7 @@
 
 define([
     'mo/lang'
-], function(_){
+], function(){
 
 
 
