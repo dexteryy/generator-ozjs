@@ -1,31 +1,34 @@
 
 module.exports = function(grunt) {
 
+    var config = require('./config');
+
     grunt.initConfig({
-        pkg: "<%= grunt.file.readJSON('package.json') %>",
+        pkg: grunt.file.readJSON('package.json'),
         meta: {
-            publicDir: 'public',
-            distDir: '<%= meta.publicDir %>/dist',
-            staticDir: '<%= meta.publicDir %>/static',
-            banner: '/*! <%= pkg.name %> - v<%= pkg.version %>'
+            publicDir: config.publicDir,
+            staticDir: config.staticDir,
+            targetDir: '<%= paths.target %>',
+            distDir: '<%= paths.dist %>'
         },
 
         clean: {
-            dist: ["<%= meta.distDir %>"],
-            statics: ["<%= meta.staticDir %>"]
+            pub: ["<%= tag('meta.publicDir') %>"],
+            target: ["<%= tag('meta.targetDir') %>"],
+            dist: ["<%= tag('meta.distDir') %>"]
         },
 
         furnace: {
             tpl: {
                 options: {
                     importas: 'tpl',
-                    exportas: 'amd',
+                    exportas: 'amd'
                 },
                 files: [{
                     expand: true,     // Enable dynamic expansion.
-                    cwd: 'tpl/',
+                    cwd: '<%= paths.tpl %>/',
                     src: ['**/*.tpl'], // Actual pattern(s) to match.
-                    dest: 'js/<%= pkg.name %>/tpl/',   // Destination path prefix.
+                    dest: '<%= paths.js %>/<%= tag("pkg.name") %>/<%= paths.tpl %>/',   // Destination path prefix.
                     ext: '.js'
                 }]
             }
@@ -34,11 +37,11 @@ module.exports = function(grunt) {
         ozma: {
             main: {
                 saveConfig: false,
-                src: 'js/main.js',
+                src: '<%= paths.js %>/main.js',
                 config: {
-                    baseUrl: "js/mod/",
-                    distUrl: "<%= meta.distDir %>/js/mod/",
-                    loader: "../lib/oz.js",
+                    baseUrl: "<%= paths.js %>/<%= paths.mod %>/",
+                    distUrl: "<%= tag('meta.targetDir') %>/<%= paths.js %>/<%= paths.mod %>/",
+                    loader: "../<%= paths.lib %>/oz.js",
                     disableAutoSuffix: true
                 }
             }
@@ -47,10 +50,10 @@ module.exports = function(grunt) {
         compass: {
             main: {
                 options: {
-                    config: 'css/config.rb',
-                    sassDir: 'css',
-                    cssDir: '<%= meta.distDir %>/css',
-                    imagesDir: 'pics',
+                    config: '<%= paths.css %>/config.rb',
+                    sassDir: '<%= paths.css %>',
+                    cssDir: '<%= tag("meta.targetDir") %>/<%= paths.css %>',
+                    imagesDir: '<%= tag("meta.targetDir") %>/<%= paths.pics %>',
                     relativeAssets: true,
                     outputStyle: 'expanded',
                     noLineComments: false,
@@ -71,9 +74,12 @@ module.exports = function(grunt) {
                 options: {
                     optimizationLevel: 3
                 },
-                files: {
-                    '<%= meta.distDir %>/pics/': 'pics/**.{png,jpg}'
-                }
+                files: [{
+                    expand: true,
+                    cwd: '<%= paths.pics %>/',
+                    src: ['**/*.{png,jpg}'],
+                    dest: '<%= tag("meta.targetDir") %>/<%= paths.pics %>/'
+                }]
             }
         },
 
@@ -83,125 +89,137 @@ module.exports = function(grunt) {
                     removeComments: true,
                     collapseWhitespace: true
                 },
-                files: {
-                    '<%= meta.publicDir %>/index.html': 'docs/index.html'
-                }
+                files: [{
+                    expand: true,
+                    cwd: '<%= paths.docs %>/',
+                    src: ['**/*.html'],
+                    dest: '<%= tag("meta.publicDir") %>/'
+                }]
             }
         },
 
         concat: {
-            js_main: {
-                src: ['<%= meta.banner %>', '<%= meta.distDir %>/js/main.js'],
-                dest: '<%= meta.staticDir %>/js/main.src.js'
+            options: {
+                stripBanners: true,
+                banner: '/*! <%= tag("pkg.name") %> - v<%= tag("pkg.version") %> */\n'
             },
-            css_main: {
-                src: ['<%= meta.banner %>', '<%= meta.distDir %>/css/main.css'],
-                dest: '<%= meta.staticDir %>/css/main.src.css'
+            js: {
+                files: [{
+                    expand: true,
+                    cwd: '<%= tag("meta.targetDir") %>/<%= paths.js %>/',
+                    src: ['**/*.js'],
+                    dest: '<%= tag("meta.distDir") %>/<%= paths.js %>/'
+                }]
+            },
+            css: {
+                files: [{
+                    expand: true,
+                    cwd: '<%= tag("meta.targetDir") %>/<%= paths.css %>/',
+                    src: ['**/*.css'],
+                    dest: '<%= tag("meta.distDir") %>/<%= paths.css %>/'
+                }]
             }
         },
 
         uglify: {
             main: {
-                src: ['<%= concat.js_main.dest %>'],
-                dest: '<%= meta.staticDir %>/js/main.js'
+                files: [{
+                    expand: true,
+                    cwd: '<%= tag("meta.distDir") %>/<%= paths.js %>/',
+                    src: ['**/*.js'],
+                    dest: '<%= tag("meta.distDir") %>/<%= paths.js %>/',
+                    ext: '.min.js'
+                }]
             }
         },
 
         cssmin: {
             main: {
-                src: ['<%= concat.css_main.dest %>'],
-                dest: '<%= meta.staticDir %>/css/main.css'
+                files: [{
+                    expand: true,
+                    cwd: '<%= tag("meta.distDir") %>/<%= paths.css %>/',
+                    src: ['**/*.css'],
+                    dest: '<%= tag("meta.distDir") %>/<%= paths.css %>/',
+                    ext: '.min.css'
+                }]
             }
         },
 
         copy: {
-            pics: {
+            target2pub: {
                 files: [{
                     expand: true,
-                    cwd: '<%= meta.distDir %>/',
-                    src: ['pics/**'],
-                    dest: '<%= meta.staticDir %>/'
+                    cwd: '<%= tag("meta.targetDir") %>/',
+                    src: ['**', '!<%= paths.pics %>/**'],
+                    dest: '<%= tag("meta.staticDir") %>/'
                 }]
             },
+            dist2pub: {
+                files: [{
+                    expand: true,
+                    cwd: '<%= tag("meta.distDir") %>/',
+                    src: ['**'],
+                    dest: '<%= tag("meta.staticDir") %>/'
+                }]
+            }
         },
 
         jshint: {
-            options: {
-                // Settings
-                "passfail": false,             // Stop on first error.
-                // Env
-                "browser": true,               // Standard browser globals e.g. `window`, `document`.
-                "nonstandard": true,
-                "node": true,
-                "globals": {
-                    "ActiveXObject": true,
-                    "require": true,
-                    "define": true,
-                    "module":true
+            options: grunt.file.readJSON('jshint.json'),
+            dev: {
+                options: {
+                    devel: true,
+                    debug: true,
+                    asi: true 
                 },
-                // Development.
-                "devel": false,                // Allow developments statements e.g. `console.log();`.
-                "debug": false,                // Allow debugger statements e.g. browser breakpoints.
-                // ECMAScript 5.
-                "es5": true,                   // Allow ECMAScript 5 syntax.
-                "strict": false,               // Require `use strict` pragma in every file.
-                "esnext": false,               // tells JSHint that your code uses ES.next specific features such as const and let
-                // The Good Parts.
-                "eqeqeq": false,               // prohibits the use of == and != in favor of === and !==
-                "eqnull": true,                // Tolerate use of `== null`.
-                "immed": true,                 // Require immediate invocations to be wrapped in parens e.g. `( function(){}() );`
-                "noarg": true,                 // Prohibit use of `arguments.caller` and `arguments.callee`.
-                "undef": true,                 // Require all non-global variables be declared before they are used.
-                "unused": true,                // warns when you define and never use your variables.
-                "trailing": false,             // makes it an error to leave a trailing whitespace in your code
-                "boss": true,                  // Tolerate assignments inside if, for & while. Usually conditions & loops are for comparison, not assignments.
-                "evil": true,                  // Tolerate use of `eval`.
-                "shadow": true,                // suppresses warnings about variable shadowing i.e. declaring a variable that had been already declared somewhere in the outer scope.
-                "proto": true,                 // suppresses warnings about the __proto__ property
-                "validthis": true,             // suppresses warnings about possible strict violations when the code is running in strict mode and you use this in a non-constructor function
-                // Personal styling preferences.
-                //"indent": 4,                   // Specify indentation spacing
-                "asi": false,                  // suppresses warnings about missing semicolons
-                "laxbreak": true,              // Tolerate unsafe line breaks e.g. `return [\n] x` without semicolons.
-                "laxcomma": true,              // suppresses warnings about comma-first coding style
-                "curly": false,                 // Require {} for every new block or scope.
-                "nonew": true,                 // Prohibit use of constructors for side-effects.
-                "sub": true,                   // Tolerate all forms of subscript notation besides dot notation e.g. `dict['key']` instead of `dict.key`.
-                "loopfunc": true,              // suppresses warnings about functions inside of loops.
-                "regexdash": true,             // suppresses warnings about unescaped - in the end of regular expressions
-                "white": false,                // Check against strict whitespace and indentation rules.
-                "scripturl": true,             // Tolerate script-targeted URLs.
-                "multistr": true               // suppresses warnings about multi-line strings
+                files: {
+                    src: ['./*.js', '<%= paths.js %>/**/*.js', '!<%= paths.js %>/<%= paths.mod %>/**', '!<%= paths.js %>/<%= tag("pkg.name") %>/<%= paths.tpl %>/**']
+                }
             },
-            main: ['./*.js', 'js/**/*.js', '!js/mod/**', '!js/lib/**']
+            dist: {
+                files: {
+                    src: ['./*.js', '<%= paths.js %>/**/*.js', '!<%= paths.js %>/<%= paths.mod %>/**', '!<%= paths.js %>/<%= tag("pkg.name") %>/<%= paths.tpl %>/**']
+                }
+            }
+        },
+
+        complexity: {
+            generic: {
+                src: ['<%= paths.js %>/<%= tag("pkg.name") %>/*.js', '!<%= paths.js %>/<%= tag("pkg.name") %>/<%= paths.tpl %>/**'],
+                options: {
+                    cyclomatic: 10,
+                    halstead: 25,
+                    maintainability: 100
+                }
+            }
         },
 
         connect: {
-            examples: {
+            pub: {
                 options: {
+                    hostname: 'localhost',
                     port: 9001,
-                    base: '<%= meta.publicDir %>/',
+                    base: '<%= tag("meta.publicDir") %>/',
                     keepalive: true
                 }
             }
         },
 
-        watch: [{
-            files: 'js/**/*.js',
-            tasks: ['ozma']
-        }, {
-            files: 'css/**/*.scss',
-            tasks: ['compass']
-        }, {
-            files: 'tpl/**/*.tpl',
-            tasks: ['furnace:tpl']
-        }, {
-            files: 'pics/**/*.{png,jpg}',
-            tasks: ['imagemin']
-        }, {
-            files: 'docs/**/*.html',
-            tasks: ['htmlmin']
-        }]
+        watch: {
+            dev: {
+                files: [
+                    '<%= paths.tpl %>/**/*.tpl', 
+                    '<%= paths.pics %>/**/*.{png,jpg}', 
+                    '<%= paths.docs %>/**/*.html',
+                    '<%= paths.js %>/**/*.js', 
+                    '<%= paths.css %>/**/*.scss'
+                ],
+                tasks: [
+                    'dev', 
+                    'test'
+                ]
+            }
+        }
 
     });
 
@@ -215,32 +233,43 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-compass');
-    grunt.loadNpmTasks('grunt-contrib-livereload');
     grunt.loadNpmTasks('grunt-contrib-connect');
+    grunt.loadNpmTasks('grunt-complexity');
 
     grunt.loadNpmTasks('grunt-furnace');
     grunt.loadNpmTasks('grunt-ozjs');
     
     grunt.registerTask('dev', [
-        'jshint',
+        'clean:target', 
+        'furnace:tpl', 
+        'imagemin', 
+        'ozma', 
+        'compass'
+    ]);
+
+    grunt.registerTask('test', [
+        'clean:pub',
+        'htmlmin',
+        'copy:target2pub'
+    ]);
+
+    grunt.registerTask('publish', [
         'clean:dist',
-        'furnace:tpl',
-        'ozma',
-        'imagemin',
-        'compass',
-        'htmlmin'
+        'concat',
+        'uglify', 
+        'cssmin'
     ]);
 
     grunt.registerTask('deploy', [
-        'clean:statics',
-        'concat',
-        'uglify', 
-        'cssmin',
-        'copy:pics'
+        'clean:pub',
+        'htmlmin',
+        'copy:dist2pub'
     ]);
 
     grunt.registerTask('default', [
+        'jshint:dist',
         'dev',
+        'publish',
         'deploy'
     ]);
 

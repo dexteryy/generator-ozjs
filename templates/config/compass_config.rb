@@ -1,3 +1,3 @@
 
-generated_images_dir = '<%= paths.dist %>pics/'
+generated_images_dir = '<%= paths.target %><%= paths.pics %>'
 

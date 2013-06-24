@@ -10,6 +10,7 @@ prompt.delimiter = "";
 prompt.colors = false;
 
 var Generator = module.exports = function Generator() {
+
     yeoman.generators.Base.apply(this, arguments);
 
     this.argument('appname', { 
@@ -17,7 +18,7 @@ var Generator = module.exports = function Generator() {
         required: false, 
         banner: 'appname'
     });
-    this.appDir = this.appname ? this.appname + '/' : '';
+    this.appDir = this.appname || './';
 
     this.on('end', function () {
         this.log('\nI\'m all done. Just run ' + (
@@ -31,11 +32,20 @@ var Generator = module.exports = function Generator() {
     this.userOpt = {};
 
     this.paths = {
-        mod: 'js/mod/',
-        cssmod: 'css/',
-        dist: 'public/dist/',
-        statics: 'public/static/'
+        js: 'js',
+        css: 'css',
+        pics: 'pics',
+        tpl: 'tpl',
+        docs: 'docs',
+        lib: 'lib',
+        mod: 'mod',
+        target: 'target',
+        dist: 'dist'
     }; 
+
+    this.tag = function(str){
+        return '<%= ' + str + ' %>';
+    };
 
 };
 
@@ -143,10 +153,10 @@ Generator.prototype.askForComponents = function() {
             }
             var file = com.file = {};
             for (var src in com.jsFiles) {
-                file[src] = this.paths.mod + com.jsFiles[src];
+                file[src] = this.paths.js + '/' + this.paths.mod + '/' + com.jsFiles[src];
             }
             for (var src in com.cssFiles) {
-                file[src] = this.paths.cssmod + com.cssFiles[src];
+                file[src] = this.paths.css + '/' + com.cssFiles[src];
             }
             if (com.name === 'Mo') {
                 this.userOpt.hasMo = true;
@@ -161,35 +171,38 @@ Generator.prototype.askForComponents = function() {
 };
 
 Generator.prototype.projectFiles = function() {
-    this.template('../../templates/config/static.yaml', this.appDir + 'static.yaml');
-    this.template('../../templates/config/package.json', this.appDir + 'package.json');
-    this.copy('../../templates/config/Gruntfile.js', this.appDir + 'Gruntfile.js');
-    this.template('../../templates/config/gitignore', this.appDir + '.gitignore');
-    this.template('../../templates/config/README.md', this.appDir + 'README.md');
+    var root = this.appDir;
+    this.template('../../templates/config/static.yaml', root + 'static.yaml');
+    this.template('../../templates/config/package.json', root + 'package.json');
+    this.template('../../templates/config/config.js.tmpl', root + 'config.js.tmpl');
+    this.template('../../templates/config/jshint.json', root + 'jshint.json');
+    this.template('../../templates/config/Gruntfile.js', root + 'Gruntfile.js');
+    this.template('../../templates/config/gitignore', root + '.gitignore');
+    this.template('../../templates/config/README.md', root + 'README.md');
     if (this.userOpt.cssPreprocessor === 0) {
-        this.template('../../templates/config/Gemfile', this.appDir + 'Gemfile');
-        this.template('../../templates/config/compass_config.rb', this.appDir + 'css/config.rb');
+        this.template('../../templates/config/Gemfile', root + 'Gemfile');
+        this.template('../../templates/config/compass_config.rb', 
+            root + this.paths.css + '/config.rb');
     }
 };
 
 Generator.prototype.bootstrapFiles = function() {
-    this.template('../../templates/js/main.js', this.appDir + 'js/main.js');
-    this.template('../../templates/js/app.js', this.appDir + 'js/' + this.appname + '/app.js');
-    this.mkdir(this.appDir + 'js/' + this.appname + '/view/');
-    this.mkdir(this.appDir + 'js/' + this.appname + '/tpl/');
-    this.mkdir(this.appDir + 'js/lib/');
-    this.mkdir(this.appDir + this.paths.mod);
-    this.mkdir(this.appDir + this.paths.cssmod);
+    var root = this.appDir;
+    var p = this.paths;
+    this.template('../../templates/js/main.js', root + [p.js, 'main.js'].join('/'));
+    this.template('../../templates/js/app.js', root + [p.js, this.appname, 'app.js'].join('/'));
+    this.mkdir(root + [p.js, this.appname, p.tpl].join('/'));
+    this.mkdir(root + [p.js, 'lib'].join('/'));
+    this.mkdir(root + [p.js, p.mod].join('/'));
+    this.mkdir(root + [p.css, this.appname].join('/'));
     if (this.userOpt.cssPreprocessor === 0) {
-        this.template('../../templates/scss/_base.scss', this.appDir + 'css/_base.scss');
-        this.template('../../templates/scss/main.scss', this.appDir + 'css/main.scss');
+        this.template('../../templates/scss/_base.scss', root + [p.css, this.appname, '_base.scss'].join('/'));
+        this.template('../../templates/scss/main.scss', root + [p.css, 'main.scss'].join('/'));
     } else if (this.userOpt.cssPreprocessor === 1) {
         // @TODO stylus
     }
-    this.mkdir(this.appDir + 'pics');
-    this.copy('../../templates/pics/glyphicons-halflings.png', this.appDir + 'pics/glyphicons-halflings.png');
-    this.mkdir(this.appDir + 'tpl');
-    this.template('../../templates/html/index.html', this.appDir + 'docs/index.html');
-    this.mkdir(this.appDir + this.paths.dist);
-    this.mkdir(this.appDir + this.paths.statics);
+    this.mkdir(root + p.pics);
+    this.copy('../../templates/pics/glyphicons-halflings.png', root + [p.pics, 'glyphicons-halflings.png'].join('/'));
+    this.mkdir(root + p.tpl);
+    this.template('../../templates/html/index.html', root + [p.docs, 'index.html'].join('/'));
 };

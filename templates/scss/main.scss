@@ -1,5 +1,2 @@
-@import "base";
-@import "animation";
 
-//@import "map1/*.png";
-//@include all-map1-sprites;
+@import '<%= appname %>/base';

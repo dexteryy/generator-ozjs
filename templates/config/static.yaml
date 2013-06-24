@@ -2,7 +2,7 @@ repos:
 
     dexteryy/OzJS:
       file:
-        oz.js: js/lib/
+        oz.js: <%= paths.js %>/<%= paths.lib %>/
 <% includeComponents.forEach(function(com){ %> <% if (com && com.repo) { %>
     <%= com.repo %>:
       file: <% Object.keys(com.file).forEach(function(src){ %>
