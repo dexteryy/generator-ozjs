@@ -143,18 +143,21 @@ module.exports = {
             name: 'Moui',
             repo: 'dexteryy/moui',
             jsFiles: {
-                './util': 'js/mod/moui/util/',
-                './control.js': 'js/mod/moui/',
-                './picker.js': 'js/mod/moui/',
-                './overlay.js': 'js/mod/moui/',
-                './actionview.js': 'js/mod/moui/',
-                './modalview.js': 'js/mod/moui/',
-                './growl.js': 'js/mod/moui/',
-                './bubble.js': 'js/mod/moui/',
-                './ranger.js': 'js/mod/moui/'
+                './util/': 'moui/util/',
+                './control.js': 'moui/',
+                './picker.js': 'moui/',
+                './overlay.js': 'moui/',
+                './actionview.js': 'moui/',
+                './modalview.js': 'moui/',
+                './growl.js': 'moui/',
+                './bubble.js': 'moui/',
+                './ranger.js': 'moui/'
             },
             cssFiles: {
                 'css/': ''
+            },
+            assetFiles: {
+                'asset/': ''
             }
         }, {
             name: 'ArkUI'

@@ -158,6 +158,9 @@ Generator.prototype.askForComponents = function() {
             for (var src in com.cssFiles) {
                 file[src] = this.paths.css + '/' + com.cssFiles[src];
             }
+            for (var src in com.assetFiles) {
+                file[src] = this.paths.pics + '/' + com.assetFiles[src];
+            }
             if (com.name === 'Mo') {
                 this.userOpt.hasMo = true;
             }
