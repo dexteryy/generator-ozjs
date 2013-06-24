@@ -59,7 +59,6 @@ module.exports = function(grunt) {
                     noLineComments: false,
                     require: [
                         'compass-normalize',
-                        'animation',
                         'animate-sass',
                         'ceaser-easing',
                         'compass-recipes'
