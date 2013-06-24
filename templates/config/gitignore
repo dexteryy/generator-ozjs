@@ -3,3 +3,5 @@ node_modules/
 .statictmp
 config.js
 **/Gruntfile.js
+public/
+target/

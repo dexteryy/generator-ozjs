@@ -18,12 +18,12 @@ var Generator = module.exports = function Generator() {
         required: false, 
         banner: 'appname'
     });
-    this.appDir = this.appname || './';
+    this.appDir = (this.appname || '.') + '/';
 
     this.on('end', function () {
         this.log('\nI\'m all done. Just run ' + (
             (this.appname ? ('cd ' + this.appDir + ' && ') : '') 
-            + 'npm install && bundle install && istatic pull && grunt'
+            + 'npm install && bundle install && istatic pull && cp config.js.tmpl config.js && grunt'
         ).bold.yellow + ' to install the required dependencies and build the app.');
     });
 
