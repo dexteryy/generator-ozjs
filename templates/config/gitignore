@@ -1,7 +1,22 @@
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Icon?
+ehthumbs.db
+Thumbs.db
+
 node_modules/
 .sass-cache/
 .statictmp
+
+js/**/Gruntfile.js
+css/**/Gruntfile.js
 config.js
-**/Gruntfile.js
 public/
-target/
+<%= paths.target %>/
+<%= paths.css %>/origin/
+<%= paths.js %>/<%= paths.origin %>/
+<%= paths.origin %>/
+

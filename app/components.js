@@ -129,13 +129,13 @@ module.exports = {
             }
         }]
     },
-    mvb: {
-        desc: 'a Model-View-Binder module',
-        defaultChoice: -1,
-        choices: [{
-            name: 'CordJS'
-        }]
-    },
+    //mvb: {
+        //desc: 'a Model-View-Binder module',
+        //defaultChoice: -1,
+        //choices: [{
+            //name: 'CordJS'
+        //}]
+    //},
     ui: {
         desc: 'an UI library',
         defaultChoice: 0,
@@ -159,8 +159,22 @@ module.exports = {
             assetFiles: {
                 'asset/': ''
             }
+        }]
+    },
+    cssframework: {
+        desc: 'an CSS framework',
+        defaultChoice: 0,
+        choices: [{
+            name: 'ArkUI',
+            repo: 'mockee/arkui',
+            originFiles: {
+                './': 'arkui/'
+            },
+            assetFiles: {
+                'pics/': ''
+            }
         }, {
-            name: 'ArkUI'
+            name: 'Bootstrap'
         }]
     }
 };

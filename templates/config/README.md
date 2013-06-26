@@ -22,7 +22,7 @@ _(Coming soon)_
 ### Build
 
 1. `cp config.js.tmpl config.js`
-3. `grunt`
+2. `grunt`
 
 ## Development
 

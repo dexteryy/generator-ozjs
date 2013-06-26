@@ -9,13 +9,33 @@ module.exports = function(grunt) {
             publicDir: config.publicDir,
             staticDir: config.staticDir,
             targetDir: '<%= paths.target %>',
-            distDir: '<%= paths.dist %>'
+            distDir: '<%= paths.dist %>',
+            originDir: '<%= paths.origin %>'
         },
 
         clean: {
             pub: ["<%= tag('meta.publicDir') %>"],
             target: ["<%= tag('meta.targetDir') %>"],
             dist: ["<%= tag('meta.distDir') %>"]
+        },
+
+        shell: {
+            <% if (userOpt.hasArkui) { %>
+            make_arkui: {
+                command: [
+                    "mkdir css",
+                    "stylus stylus/ -o css",
+                    "cp -r css ../../css/<%= tag('meta.originDir') %>/arkui"
+                ].join('&&'),
+                options: {
+                    stdout: true,
+                    stderr: true,
+                    execOptions: {
+                        cwd: "<%= tag('meta.originDir') %>/arkui"
+                    }
+                }
+            }
+            <% } %>
         },
 
         furnace: {
@@ -145,6 +165,20 @@ module.exports = function(grunt) {
         },
 
         copy: {
+            <% if (userOpt.cssPreprocessor === 0) { %>
+            origin2scss: {
+                files: [{
+                    expand: true,
+                    cwd: "<%= paths.css %>/<%= tag('meta.originDir') %>/",
+                    src: ['**/*.css'],
+                    dest: '<%= paths.css %>/',
+                    rename: function(dest, src) {
+                        return dest 
+                            + src.replace(/([^\/\\]+)\.css$/, '_$1.scss');
+                    }
+                }]
+            },
+            <% } %>
             target2pub: {
                 files: [{
                     expand: true,
@@ -234,7 +268,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-compass');
     grunt.loadNpmTasks('grunt-contrib-connect');
     grunt.loadNpmTasks('grunt-complexity');
-
+    grunt.loadNpmTasks('grunt-shell');
     grunt.loadNpmTasks('grunt-furnace');
     grunt.loadNpmTasks('grunt-ozjs');
     
@@ -266,6 +300,12 @@ module.exports = function(grunt) {
     ]);
 
     grunt.registerTask('default', [
+        <% if (userOpt.hasArkui) { %>
+        'shell:make_arkui',
+        <% } %>
+        <% if (userOpt.cssPreprocessor === 0) { %>
+        'copy:origin2scss',
+        <% } %>
         'jshint:dist',
         'dev',
         'publish',

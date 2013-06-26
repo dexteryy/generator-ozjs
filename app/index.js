@@ -39,6 +39,7 @@ var Generator = module.exports = function Generator() {
         docs: 'docs',
         lib: 'lib',
         mod: 'mod',
+        origin: 'origin',
         target: 'target',
         dist: 'dist'
     }; 
@@ -161,11 +162,17 @@ Generator.prototype.askForComponents = function() {
             for (var src in com.assetFiles) {
                 file[src] = this.paths.pics + '/' + com.assetFiles[src];
             }
+            for (var src in com.originFiles) {
+                file[src] = this.paths.origin + '/' + com.originFiles[src];
+            }
             if (com.name === 'Mo') {
                 this.userOpt.hasMo = true;
             }
             if (type === 'dom' && com.name !== 'jQuery') {
                 this.userOpt.jqueryAlternate = com.moduleId;
+            }
+            if (com.name === 'ArkUI') {
+                this.userOpt.hasArkui = true;
             }
             return com;
         }.bind(this));
@@ -198,6 +205,7 @@ Generator.prototype.bootstrapFiles = function() {
     this.mkdir(root + [p.js, 'lib'].join('/'));
     this.mkdir(root + [p.js, p.mod].join('/'));
     this.mkdir(root + [p.css, this.appname].join('/'));
+    this.mkdir(root + [p.css, p.origin].join('/'));
     if (this.userOpt.cssPreprocessor === 0) {
         this.template('../../templates/scss/_base.scss', root + [p.css, this.appname, '_base.scss'].join('/'));
         this.template('../../templates/scss/main.scss', root + [p.css, 'main.scss'].join('/'));
