@@ -18,16 +18,12 @@ Available generators:
 ### Require
 
 1. node, npm
-2. [grunt v0.4](http://gruntjs.com/getting-started) - `npm install grunt-cli -g`
-3. [istatic](https://ozjs.org/istatic) - `node install node-istatic -g`
-4. [Yo](http://yeoman.io/gettingstarted_1.0.html) - `npm install yo -g`
-5. ruby, gem, [bundler](http://gembundler.com/) (if you need Scss)
+2. ruby, gem, [bundler](http://gembundler.com/) (if you need Scss)
 
 ### Install
 
 ```
-cd ~
-npm install generator-ozjs
+npm install -g generator-ozjs
 ```
 
 ### Usage
@@ -40,6 +36,7 @@ yo ozjs
 npm install
 bundle install
 istatic pull
+cp config.js.tmpl config.js
 grunt
 ```
 
@@ -51,6 +48,7 @@ cd project_name
 npm install
 bundle install
 istatic pull
+cp config.js.tmpl config.js
 grunt
 ```
 
