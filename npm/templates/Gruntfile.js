@@ -51,6 +51,44 @@ module.exports = function(grunt) {
 
         jshint: {
             options: {
+                "passfail": false,
+                "browser": true,
+                "nonstandard": true,
+                "node": true,
+                "globals": {
+                    "ActiveXObject": true,
+                    "require": true,
+                    "define": true,
+                    "module":true
+                },
+                "devel": false,
+                "debug": false,
+                "es5": true,
+                "strict": false,
+                "esnext": false,
+                "eqeqeq": false,
+                "eqnull": true,
+                "immed": true,
+                "noarg": true,
+                "undef": true,
+                "unused": true,
+                "trailing": false,
+                "boss": true,
+                "evil": true,
+                "shadow": true,
+                "proto": true,
+                "validthis": true,
+                "asi": false,
+                "laxbreak": true,
+                "laxcomma": true,
+                "curly": false,
+                "nonew": true,
+                "sub": true,
+                "loopfunc": true,
+                "regexdash": true,
+                "white": false,
+                "scripturl": true,
+                "multistr": true
             },
             main: ['**/*.js', '!<%= meta.publishDir %>/**', '!node_modules/**']
         }
