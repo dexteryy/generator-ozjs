@@ -3,6 +3,11 @@ var path = require('path');
 var util = require('util');
 var fs = require('fs');
 var yeoman = require('yeoman-generator');
+var prompt = require('prompt');
+
+prompt.message = "";
+prompt.delimiter = "";
+prompt.colors = false;
 
 var Generator = module.exports = function Generator() {
     yeoman.generators.Base.apply(this, arguments);
@@ -26,20 +31,27 @@ util.inherits(Generator, yeoman.generators.NamedBase);
 
 Generator.prototype.askForOverride = function() {
     var done = this.async();
-    var prompts = [];
+    var prompts = { properties: {} };
     if (fs.existsSync(this.appDir + 'package.json')) {
-        prompts.push({
-            name: 'ignorePackage',
-            message: 'package.json already exists. Overwrite? (N/y)'
-        });
+        prompts.properties.ignorePackage = {
+            description: 'package.json already exists. Overwrite? '.cyan
+                + 'y/n'.magenta,
+            type: 'string',
+            pattern: /^[yYnN]$/,
+            default: 'N'
+        };
     }
     if (fs.existsSync(this.appDir + 'Gruntfile.js')) {
-        prompts.push({
-            name: 'ignoreGrunt',
-            message: 'Gruntfile.js already exists. Overwrite? (N/y)'
-        });
+        prompts.properties.ignoreGrunt = {
+            description: 'Gruntfile.js already exists. Overwrite? '.cyan
+                + 'y/n'.magenta,
+            type: 'string',
+            pattern: /^[yYnN]$/,
+            default: 'N'
+        };
     }
-    this.prompt(prompts, function(err, props) {
+    prompt.start();
+    prompt.get(prompts, function(err, props) {
         if (err) {
             return this.emit('error', err);
         }
